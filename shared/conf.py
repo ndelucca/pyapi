@@ -12,7 +12,7 @@ class ConfigException(Exception):
 
 
 class Config:
-    """Configuration file parser module"""
+    """Configuration file parser class"""
 
     filepath: str
     params: ConfigParser
