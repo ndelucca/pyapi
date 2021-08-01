@@ -17,7 +17,7 @@ class SharedData:
 
 
 @click.group()
-@click.version_option(None, "--version")
+@click.version_option(None, "--version", package_name="pyapi")
 @click.pass_context
 def main(context: click.Context) -> None:
     """Application CLI interface"""
