@@ -1,28 +1,17 @@
+"""Main CLI module"""
+
+from dataclasses import dataclass
 import click
 from shared.conf import Config
 from shared.log import Log
 
 
+@dataclass
 class SharedData:
     """Class to share data among the CLI instance"""
 
     conf: Config
     log: Log
-
-    def __init__(self):
-        self.conf = Config()
-        self.log = Log(
-            self.conf.params["log"]["dir"], self.conf.params["log"]["cli_file"]
-        )
-
-
-@click.group()
-@click.version_option(None, "--version", package_name="pyapi")
-@click.pass_context
-def main(context: click.Context) -> None:
-    """Application CLI interface"""
-
-    context.obj = SharedData()
 
 
 @click.command()
@@ -32,4 +21,12 @@ def configuration(shared: SharedData) -> None:
     click.echo(shared.conf)
 
 
-main.add_command(configuration)
+@click.group(commands=[configuration])
+@click.version_option(None, "--version", package_name="pyapi")
+@click.pass_context
+def main(context: click.Context) -> None:
+    """Application CLI interface"""
+
+    conf = Config()
+    log = Log(conf.params["log"]["dir"], conf.params["log"]["cli_file"])
+    context.obj = SharedData(conf, log)

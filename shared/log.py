@@ -1,13 +1,16 @@
-import click
+"""Log handling module"""
+
 import os
-import io
 import logging
+import click
 
 
 class LogException(Exception):
     """Log Exception"""
 
-    def __init__(self, message):
+    message: str
+
+    def __init__(self, message: str):
         self.message = message
         super().__init__(message)
 
@@ -27,40 +30,45 @@ class Log:
             try:
                 os.makedirs(logdir, mode=0o777)
             except PermissionError:
-                raise LogException(
-                    f"Can't create {logdir} directories. Check permissions"
-                )
+                msg: str = f"Can't create {logdir} directories. Check permissions"
+                raise LogException(msg) from None
 
         self.logfile = os.path.join(logdir, logfile)
 
-        logging.basicConfig(
-            format="%(asctime)s[%(levelname)s]: %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-            filename=self.logfile,
-            level=level,
-        )
+        settings: dict = {
+            "format": "%(asctime)s[%(levelname)s]: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "filename": self.logfile,
+            "level": level,
+        }
+
+        try:
+            logging.basicConfig(**settings)
+        except PermissionError:
+            msg: str = f"Can't create {self.logfile} file. Check permissions"
+            raise LogException(msg) from None
 
         self.logger = logging.getLogger("")
 
     def __str__(self) -> str:
         return self.logfile
 
-    def debug(self, msg, fg="blue") -> None:
+    def debug(self, msg: str, color: str = "blue", **kwargs) -> None:
         """Log message on Debug level log"""
-        smsg = click.style(msg, fg=fg)
+        smsg = click.style(msg, fg=color, **kwargs)
         self.logger.debug(smsg)
 
-    def info(self, msg, fg="white") -> None:
+    def info(self, msg: str, color: str = "white", **kwargs) -> None:
         """Log message on Info level log"""
-        smsg = click.style(msg, fg=fg)
+        smsg = click.style(msg, fg=color, **kwargs)
         self.logger.info(smsg)
 
-    def warning(self, msg, fg="yellow") -> None:
+    def warning(self, msg: str, color: str = "yellow", **kwargs) -> None:
         """Log message on Warning level log"""
-        smsg = click.style(msg, fg=fg)
+        smsg = click.style(msg, fg=color, **kwargs)
         self.logger.warning(smsg)
 
-    def error(self, msg, fg="red") -> None:
+    def error(self, msg: str, color: str = "red", **kwargs) -> None:
         """Log message on Error level log"""
-        smsg = click.style(msg, fg=fg)
+        smsg = click.style(msg, fg=color, **kwargs)
         self.logger.error(smsg)

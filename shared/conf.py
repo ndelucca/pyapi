@@ -1,3 +1,5 @@
+"""Configuration file handling module"""
+
 import os
 from configparser import ConfigParser
 from typing import List
@@ -6,7 +8,9 @@ from typing import List
 class ConfigException(Exception):
     """Configuration Exception"""
 
-    def __init__(self, message):
+    message: str
+
+    def __init__(self, message: str):
         self.message = message
         super().__init__(message)
 

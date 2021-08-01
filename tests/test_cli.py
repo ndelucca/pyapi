@@ -18,6 +18,6 @@ test_commands_params = [
 
 @pytest.mark.parametrize("method, params", test_commands_params)
 def test_commands(method, params: List[str]):
-    """Test base de ejecucion de comandos"""
+    """Commands basic call tests"""
     execution = runner.invoke(method, params)
     assert execution.exit_code == 0
